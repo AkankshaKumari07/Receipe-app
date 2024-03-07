@@ -1,35 +1,17 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { FaYoutube } from "react-icons/fa";
+import useFetchData from "../use-fetch";
 
 const SinglePage = ({ params }) => {
+  const { data: mealData, loading: mealLoading } = useFetchData(
+    `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${params.mealId}`
+  );
+  console.log(mealData);
   const [active, setActive] = useState("ingredient");
   const [showFullInstructions, setShowFullInstructions] = useState(false);
-  const [mealData, setMealData] = useState(null);
-  const [mealLoading, setMealLoading] = useState(true);
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${params.mealId}`
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        console.log(data);
-        setMealData(data.meals[0]);
-        setMealLoading(false);
-      } catch (error) {
-        console.error("Fetch error:", error);
-        setMealLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [params.mealId]);
 
   const toggleInstructions = () => {
     setShowFullInstructions(!showFullInstructions);
@@ -37,11 +19,22 @@ const SinglePage = ({ params }) => {
 
   if (mealLoading) return <div>Loading...</div>;
 
-  const meal = mealData;
+  const meal = mealData[0]; // mealData is an array, so access the first element
+
+  const ingredients = [
+    { ingredient: meal.strIngredient1, measure: meal.strMeasure1 },
+    { ingredient: meal.strIngredient2, measure: meal.strMeasure2 },
+    { ingredient: meal.strIngredient3, measure: meal.strMeasure3 },
+    { ingredient: meal.strIngredient4, measure: meal.strMeasure4 },
+    { ingredient: meal.strIngredient5, measure: meal.strMeasure5 },
+    { ingredient: meal.strIngredient6, measure: meal.strMeasure6 },
+  ];
+
+  const availableIngredients = ingredients.filter((item) => item.ingredient);
 
   return (
-    <div className="min-h-[550px]">
-      <h1 className="md:text-4xl text-2xl font-bold text-center mt-6">
+    <div className="md:min-h-[550px]">
+      <h1 className="lg:text-4xl md:text-2xl text-2xl font-bold text-center mt-6">
         {meal.strMeal}
         <span className="ml-2">({meal.strArea})</span>
       </h1>
@@ -58,7 +51,7 @@ const SinglePage = ({ params }) => {
           </div>
         </div>
         <div className="md:w-[50%] text-left md:ml-[5rem] md:mx-0 mx-auto md:mt-0 mt-10">
-          <div className="flex">
+          <div className="flex md:justify-start md:items-start justify-center items-center">
             <button
               className={`${
                 active === "ingredient" ? "bg-yellow-500" : "bg-gray-300"
@@ -82,21 +75,17 @@ const SinglePage = ({ params }) => {
           </div>
           <div>
             {active === "ingredient" ? (
-              <div className="mt-10 font-bold md:text-3xl text-xl">
-                {Object.keys(meal)
-                  .filter((key) => key.startsWith("strIngredient") && meal[key])
-                  .map((key) => (
-                    <h2 key={key}>
-                      {meal[key]} <span className="ml-5">-</span>
-                      <span className="ml-5">
-                        {meal[`strMeasure${key.slice(-1)}`]}
-                      </span>
-                    </h2>
-                  ))}
+              <div className="mt-10 font-bold lg:text-3xl md:text-xl text-xl">
+                {availableIngredients.map((item, index) => (
+                  <h2 key={index}>
+                    {item.ingredient} <span className="ml-5">-</span>
+                    <span className="ml-5">{item.measure}</span>
+                  </h2>
+                ))}
               </div>
             ) : (
-              <div className="mt-10">
-                <p className="w-[800px] text-justify">
+              <div className="mt-10 md:mr-10 md:ml-0 ml-8">
+                <p className="md:max-w-[800px] max-w-[360px] text-justify lg:text-lg md:text-base text-base">
                   {showFullInstructions
                     ? meal.strInstructions
                     : `${meal.strInstructions.substring(0, 200)}...`}
@@ -109,6 +98,25 @@ const SinglePage = ({ params }) => {
                     {showFullInstructions ? "Read Less" : "Read More"}
                   </button>
                 )}
+                <div>
+                  <p className="mt-5 lg:text-xl md:text-base text-base">
+                    Watch the video below for visual instructions :
+                  </p>
+                  <Link href={meal.strYoutube} passHref>
+                    <div className="flex items-center text-blue-600 lg:text-lg md:text-base text-sm hover:text-blue-800 underline">
+                      <FaYoutube className="w-6 h-6 text-red-600 mr-2 " />
+                      {meal.strYoutube}
+                    </div>
+                  </Link>
+                  <Link href={meal.strSource} passHref>
+                    <div className="flex flex-col mt-5 lg:text-xl md:text-base text-base">
+                      Read about {meal.strMeal} :
+                      <span className="text-blue-600 lg:text-lg md:text-base text-sm hover:text-blue-800 underline">
+                        {meal.strSource}
+                      </span>
+                    </div>
+                  </Link>
+                </div>
               </div>
             )}
           </div>

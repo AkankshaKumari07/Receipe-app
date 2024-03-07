@@ -1,43 +1,19 @@
-'use client'
-import React, { useState, useEffect } from 'react';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import Link from 'next/link';
-import Image from 'next/image';
+"use client";
+import React from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Link from "next/link";
+import Image from "next/image";
+import useFetchData from "@/app/use-fetch";
 
 const TrendingSlider = () => {
-  const [meals, setMeals] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: meals, loading } = useFetchData(
+    "https://www.themealdb.com/api/json/v1/1/search.php?s"
+  );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          'https://www.themealdb.com/api/json/v1/1/search.php?s'
-        );
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setMeals(data.meals);
-        setLoading(false);
-      } catch (error) {
-        console.error('Fetch error:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const isMobile =
-    typeof window !== 'undefined'
-      ? window.matchMedia('(max-width: 768px)').matches
-      : false; // Check if viewport is mobile
-
-  // Set different number of slides based on viewport size
-  const slidesToShow = isMobile ? 3 : 6;
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  const slidesToShow = isMobile ? 2 : 8;
 
   const settings = {
     arrows: false,
@@ -47,7 +23,7 @@ const TrendingSlider = () => {
     autoplay: true,
     speed: 2000,
     autoplaySpeed: 500,
-    cssEase: 'linear',
+    cssEase: "linear",
   };
 
   return (

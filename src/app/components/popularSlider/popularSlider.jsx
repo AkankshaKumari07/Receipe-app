@@ -1,43 +1,34 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import Link from 'next/link';
-import Image from 'next/image';
+"use client";
+import React from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Link from "next/link";
+import Image from "next/image";
+import useFetchData from "@/app/use-fetch";
 
 const PopularSlider = () => {
-  const [meals, setMeals] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    data: meals,
+    loading,
+    error,
+  } = useFetchData("https://www.themealdb.com/api/json/v1/1/search.php?s");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          'https://www.themealdb.com/api/json/v1/1/search.php?s'
-        );
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        console.log(data)
-        setMeals(data.meals);
-        setLoading(false);
-      } catch (error) {
-        console.error('Fetch error:', error);
-        setError('Error fetching data. Please try again later.');
-        setLoading(false);
-      }
-    };
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  let slidesToShow = 4; // Default value for larger screens
 
-    fetchData();
-  }, []);
+  if (isMobile) {
+    slidesToShow = 1; // For mobile screens, show only 1 slide
+  } else if (window.innerWidth < 1024) {
+    slidesToShow = 2; // For medium-sized screens, show 2 slides
+  } else if (window.innerWidth < 1624) {
+    slidesToShow = 3; // For large screens, show 2 slides
+  }
 
   var settings = {
     dots: false,
     infinite: true,
-    slidesToShow: 3,
+    slidesToShow: slidesToShow,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 2000,
@@ -45,15 +36,13 @@ const PopularSlider = () => {
   };
 
   return (
-    <div className="h-[50vh] w-[90%] m-auto mt-28">
+    <div className="h-[50vh] md:w-[90%] md:m-auto md:mt-20 mt-10">
       {loading ? (
         <div>Loading...</div>
-      ) : error ? (
-        <div>{error}</div>
       ) : (
         <Slider {...settings} className="m-8">
           {meals.map((meal) => (
-            <div key={meal.idMeal} className="m-8 ml-24">
+            <div key={meal.idMeal} className="m-8 md:ml-24">
               <Link href={`/${meal.idMeal}`} passHref>
                 <Image
                   src={meal.strMealThumb}
