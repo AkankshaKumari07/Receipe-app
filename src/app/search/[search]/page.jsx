@@ -15,7 +15,7 @@ const SearchElements = ({ params }) => {
         <>
           {data.length === 0 ? (
             <div className="font-bold text-xl text-center flex flex-col justify-center items-center md:min-h-[55vh] min-h-[40vh] ">
-              No results found for "{searchTerm}"
+              No results found for &quot;{searchTerm}&quot;
               <Link href="/">
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-6">
                   Go to Home
