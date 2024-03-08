@@ -11,7 +11,6 @@ const PopularSlider = () => {
   const {
     data: meals,
     loading,
-    error,
   } = useFetchData("https://www.themealdb.com/api/json/v1/1/search.php?s");
 
   const [isMobile, setIsMobile] = useState(false);
