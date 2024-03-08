@@ -35,7 +35,7 @@ const Navbar = () => {
           />
         </form>
       </div>
-      <div className="flex 2xl:space-x-12 xl:space-x-6 lg:space-x-4 md::space-x-2  space-x-4 xl:ml-[20rem] text-xl 2xl:text-xl xl:text-xl lg:text-xl md:text-base 2xl:mr-20 font-semibold md:mt-0 mt-5 md:mb-0 mb-12 cursor-pointer">
+      <div className="flex 2xl:space-x-12 xl:space-x-6 lg:space-x-4 md:space-x-2 space-x-4 xl:ml-[20rem] text-lg 2xl:text-xl xl:text-xl lg:text-xl md:text-base 2xl:mr-20 font-semibold md:mt-0 mt-5 md:mb-0 mb-12 cursor-pointer">
         <Link href={`/category/indian`} className="text-white hover:underline">
           Indian
         </Link>
