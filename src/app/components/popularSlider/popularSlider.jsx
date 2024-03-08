@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -14,16 +14,23 @@ const PopularSlider = () => {
     error,
   } = useFetchData("https://www.themealdb.com/api/json/v1/1/search.php?s");
 
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
-  let slidesToShow = 4; // Default value for larger screens
+  const [isMobile, setIsMobile] = useState(false);
 
-  if (isMobile) {
-    slidesToShow = 1; // For mobile screens, show only 1 slide
-  } else if (window.innerWidth < 1024) {
-    slidesToShow = 2; // For medium-sized screens, show 2 slides
-  } else if (window.innerWidth < 1624) {
-    slidesToShow = 3; // For large screens, show 2 slides
-  }
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+    };
+
+    handleResize(); // Initialize isMobile state
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const slidesToShow = isMobile ? 1 : 4;
 
   var settings = {
     dots: false,
